@@ -1,6 +1,7 @@
 (defpackage #:gp.kernel
   (:use #:cl #:gp.random)
-  (:export *number-of-fitness-cases*
+  (:export *verbose*
+           *number-of-fitness-cases*
            *max-depth-for-new-individuals*
            *max-depth-for-individuals-after-crossover*
            *fitness-proportionate-reproduction-fraction*
@@ -9,7 +10,9 @@
            *max-depth-for-new-subtrees-in-mutants*
            *method-of-selection*
            *method-of-generation*
+           *best-of-run-individual*
            #:run-genetic-programming-system
+           #:individual
    ))
 
 (in-package #:gp.kernel)
@@ -20,6 +23,9 @@
   (adjusted-fitness 0)
   (normalized-fitness 0)
   (hits 0))
+
+(defvar *verbose* :unbound
+  "Run in verbose mode with :verbose")
 
 (defvar *number-of-fitness-cases* :unbound
   "The number of fitness cases")
@@ -439,7 +445,8 @@
         (setf *best-of-run-individual* (copy-individual best-of-generation))
         (setf *generation-of-best-of-run-individual* current-generation)))
     ;; Print out the results for this generation.
-    (report-on-generation current-generation population)))
+    (when (eq *verbose* :verbose)
+      (report-on-generation current-generation population))))
 
 (defun zeroize-fitness-measures-of-population (population)
   "Clean out the statistics in each individual in the

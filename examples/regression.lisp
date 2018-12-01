@@ -90,11 +90,15 @@
 
 (defun run (maximum-generations
             size-of-population
-            seed)
-  (gp.kernel:run-genetic-programming-system 'REGRESSION
+            seed
+            &key (verbose nil))
+  (let ((*verbose* (if verbose :verbose :silent)))
+    (gp.kernel:run-genetic-programming-system 'REGRESSION
                                             seed
                                             maximum-generations
-                                            size-of-population))
+                                            size-of-population)))
 
-(defun run-example ()
-  (run 1000 50 48))
+(defun run-example (&key (verbose nil))
+  (multiple-value-bind (population fitness-cases)
+      (run 1000 50 48 :verbose verbose)
+    (declare (ignore population fitness-cases))))
