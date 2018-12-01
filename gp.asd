@@ -30,3 +30,17 @@
                (:module "examples"
                         :serial t
                         :components ((:file "majority_on")))))
+
+(defsystem "gp/examples/regression"
+  :description "Genetic Programming example: Regression"
+  :version "0.0.1"
+  :author "Guillaume MICHEL"
+  :mailto "contact@orilla.fr"
+  :homepage "http://orilla.fr"
+  :license  "MIT License (see COPYING)"
+  :depends-on ("gp")
+  :components ((:static-file "COPYING")
+               (:static-file "README.md")
+               (:module "examples"
+                        :serial t
+                        :components ((:file "regression")))))
