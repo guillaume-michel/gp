@@ -1,6 +1,7 @@
 (defpackage #:gp.examples.majority-on
   (:use #:cl #:gp.kernel)
-  (:export
+  (:export #:run
+           #:run-example
    ))
 
 (in-package #:gp.examples.majority-on)
@@ -105,3 +106,6 @@
                                             seed
                                             maximum-generations
                                             size-of-population))
+
+(defun run-example ()
+  (run 1000 50 48))

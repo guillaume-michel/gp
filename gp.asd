@@ -16,3 +16,17 @@
                                      ;;(:file "fast_eval")
                                      (:file "simplify")
                                      (:file "simplify_rules")))))
+
+(defsystem "gp/examples/majority_on"
+  :description "Genetic Programming example: 3-Majority ON"
+  :version "0.0.1"
+  :author "Guillaume MICHEL"
+  :mailto "contact@orilla.fr"
+  :homepage "http://orilla.fr"
+  :license  "MIT License (see COPYING)"
+  :depends-on ("gp")
+  :components ((:static-file "COPYING")
+               (:static-file "README.md")
+               (:module "examples"
+                        :serial t
+                        :components ((:file "majority_on")))))
