@@ -2,6 +2,7 @@
   (:use #:cl #:gp.kernel)
   (:export #:run
            #:run-example
+           #:bench
    ))
 
 (in-package #:gp.examples.regression)
@@ -43,8 +44,7 @@
 (defun REGRESSION-wrapper (result-from-program)
   (values result-from-program))
 
-(defun evaluate-standardized-fitness-for-REGRESSION
-    (program fitness-cases)
+(defun evaluate-standardized-fitness-for-REGRESSION (program fitness-cases)
   (let (raw-fitness hits standardized-fitness x target-value difference value-from-program this-fitness-case)
     (setf raw-fitness 0.0)
     (setf hits 0)
@@ -60,7 +60,7 @@
     (values standardized-fitness hits)))
 
 (defun define-parameters-for-REGRESSION ()
-  (setf *number-of-fitness-cases* 10)
+  (setf *number-of-fitness-cases* 100)
   (setf *max-depth-for-new-individuals* 6)
   (setf *max-depth-for-individuals-after-crossover* 17)
   (setf *fitness-proportionate-reproduction-fraction* 0.1)
@@ -94,11 +94,17 @@
             &key (verbose nil))
   (let ((*verbose* (if verbose :verbose :silent)))
     (gp.kernel:run-genetic-programming-system 'REGRESSION
-                                            seed
-                                            maximum-generations
-                                            size-of-population)))
+                                              seed
+                                              maximum-generations
+                                              size-of-population)))
 
 (defun run-example (&key (verbose nil))
   (multiple-value-bind (population fitness-cases)
       (run 1000 50 48 :verbose verbose)
+    (declare (ignore population fitness-cases))))
+
+(defun bench ()
+  (multiple-value-bind (population fitness-cases)
+      (time
+       (run 100 50 48 :verbose nil))
     (declare (ignore population fitness-cases))))
