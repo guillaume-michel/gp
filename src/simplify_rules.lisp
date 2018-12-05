@@ -1,11 +1,15 @@
 (defpackage #:gp.simplify-rules
-  (:use #:cl #:gp.simplify)
+  (:use #:cl
+        #:gp.functions
+        #:gp.simplify
+        )
   (:export #:*boolean-rules*
+           #:*algebraic-rules*
            ))
 
 (in-package #:gp.simplify-rules)
 
-;;; Rule base.
+;;; Boolean Rule base.
 
 (defvar *boolean-rules* nil
   "The rule base for Boolean problems.")
@@ -112,3 +116,119 @@
                                (symbolp (third sexpression))
                                (eq (second sexpression) (third sexpression)))
                :action (replace-sexpression (second sexpression)))
+
+;;; Boolean Rule base.
+
+(defvar *algebraic-rules* nil
+  "The rule base for Algebraic problems.")
+
+;;; Transforms expressions of the form (+ <xxx> 0) into <xxx>.
+(def-edit-rule x+0->x *algebraic-rules* (sexpression)
+               :condition (and (consp sexpression)
+                               (eq '+ (first sexpression))
+                               (dolist (arg (rest sexpression) nil)
+                                 (when (and (constant-expression-p arg)
+                                            (eq arg 0))
+                                   (return t))))
+               :action (let ((remaining-args
+                              (remove-if #'(lambda (arg)
+                                             (and (constant-expression-p arg)
+                                                  (eq arg 0)))
+                                         (rest sexpression))))
+                         (replace-sexpression
+                          (case (length remaining-args)
+                            (0 0)
+                            (1 (first remaining-args))
+                            (otherwise (cons '+ remaining-args))))))
+
+;;; Transforms expressions of the form (* 0 <xxx>) into ;;; 0.
+(def-edit-rule 0*x->0 *algebraic-rules* (sexpression)
+               :condition (and (consp sexpression)
+                               (eq '* (first sexpression))
+                               (dolist (arg (rest sexpression) nil)
+                                 (when (and (constant-expression-p arg)
+                                            (eq arg 0))
+                                   (return t))))
+               :action (replace-sexpression 0))
+
+;;; Transforms expressions of the form (* 1 <xxx>) into ;;; <xxx>.
+(def-edit-rule 1*x->x *algebraic-rules* (sexpression)
+               :condition (and (consp sexpression)
+                               (eq '* (first sexpression))
+                               (dolist (arg (rest sexpression) nil)
+                                 (when (and (constant-expression-p arg)
+                                            (eq arg 1))
+                                   (return t))))
+               :action (let ((remaining-args
+                              (remove-if #'(lambda (arg)
+                                             (and (constant-expression-p arg)
+                                                  (eq arg 1)))
+                                         (rest sexpression))))
+                         (replace-sexpression
+                          (case (length remaining-args)
+                            (0 1)
+                            (1 (first remaining-args))
+                            (otherwise (cons '* remaining-args))))))
+
+;;; Transforms expressions of the form (% <xxx> <xxx>) into ;;; 1.
+(def-edit-rule x%x->1 *algebraic-rules* (sexpression)
+               :condition (and (consp sexpression)
+                               (eq '% (first sexpression))
+                               (= (length sexpression) 3)
+                               (symbolp (second sexpression))
+                               (symbolp (third sexpression))
+                               (eq (second sexpression) (third sexpression)))
+               :action (replace-sexpression 1))
+
+;;; Combines calls to + and * into their polyadic forms, so
+;;; (* (* <xxx> <yyy>) <zzz>) will be transformed into (* <xxx> <yyy> <zzz>).
+(def-edit-rule polyadicize *algebraic-rules* (sexpression)
+               :condition (and (consp sexpression)
+                               (member (first sexpression) '(* +)
+                                       :test #'eq)
+                               (dolist (arg (rest sexpression) nil)
+                                 (when (and (consp arg)
+                                            (eq (first arg)
+                                                (first sexpression)))
+                                   (return t))))
+               :action (let ((interesting-arg
+                              (dolist (arg (rest sexpression) nil)
+                                (when (and (consp arg)
+                                           (eq (first arg)
+                                               (first sexpression)))
+                                  (return arg)))))
+                         (replace-sexpression
+                          (cons (first sexpression)
+                                (append (rest interesting-arg)
+                                        (remove interesting-arg
+                                                (rest sexpression)))))))
+
+;;; Transforms expressions of the form (- <xxx> <xxx>) into ;;; 0.
+(def-edit-rule x-x->0 *algebraic-rules* (sexpression)
+               :condition (and (consp sexpression)
+                               (eq '- (first sexpression))
+                               (= (length sexpression) 3)
+                               (symbolp (second sexpression))
+                               (symbolp (third sexpression))
+                               (eq (second sexpression) (third sexpression)))
+               :action (replace-sexpression 0))
+
+;;; Transforms expressions of the form (- <xxx> 0) into ;;; <xxx>.
+(def-edit-rule x-0->x *algebraic-rules* (sexpression)
+               :condition (and (consp sexpression)
+                               (eq '- (first sexpression))
+                               (= (length sexpression) 3)
+                               (symbolp (second sexpression))
+                               (numberp (third sexpression))
+                               (eq 0 (third sexpression)))
+               :action (replace-sexpression (second sexpression)))
+
+;;; Transforms expressions of the form (- <xxx> 0) into ;;; <xxx>.
+(def-edit-rule x+x->2*x *algebraic-rules* (sexpression)
+               :condition (and (consp sexpression)
+                               (eq '+ (first sexpression))
+                               (= (length sexpression) 3)
+                               (symbolp (second sexpression))
+                               (symbolp (third sexpression))
+                               (eq (second sexpression) (third sexpression)))
+               :action (replace-sexpression (list '* 2 (second sexpression))))

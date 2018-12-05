@@ -218,7 +218,7 @@
           *number-of-fitness-cases*)
   (format t "~%Selection method: ~50T~A" *method-of-selection*)
   (format t "~%Generation method: ~50T~A" *method-of-generation*)
-  (format t "~%Randomizer seed: ~50T~D" *seed*))
+  (format t "~%Randomizer seed: ~50T~D~%" *seed*))
 
 (defvar *generation-0-uniquifier-table*
   (make-hash-table :test #'equal)

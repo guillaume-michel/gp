@@ -1,9 +1,14 @@
 (defpackage #:gp.examples.regression
-  (:use #:cl #:gp.kernel)
+  (:use #:cl
+        #:gp.kernel
+        #:gp.functions
+        #:gp.simplify
+        #:gp.simplify-rules
+        )
   (:export #:run
            #:run-example
            #:bench
-   ))
+           ))
 
 (in-package #:gp.examples.regression)
 
@@ -18,12 +23,6 @@
   (values '(+ - * %)
           '(2 2 2 2)))
 
-(defun % (numerator denominator)
-  "The Protected Division Function"
-  (values (if (= 0 denominator)
-              1
-              (/ numerator denominator))))
-
 (defstruct REGRESSION-fitness-case
   independent-variable
   target)
@@ -31,14 +30,16 @@
 (defun define-fitness-cases-for-REGRESSION ()
   (let (fitness-cases x this-fitness-case)
     (setf fitness-cases (make-array *number-of-fitness-cases*))
-    (format t "~%Fitness cases")
+    (when (eq *verbose* :verbose)
+      (format t "~%Fitness cases"))
     (dotimes (index *number-of-fitness-cases*)
       (setf x (/ index *number-of-fitness-cases*))
       (setf this-fitness-case (make-REGRESSION-fitness-case))
       (setf (aref fitness-cases index) this-fitness-case)
       (setf (REGRESSION-fitness-case-independent-variable this-fitness-case) x)
       (setf (REGRESSION-fitness-case-target this-fitness-case) (* 0.5 x x))
-      (format t "~% ~D      ~D      ~D" index (float x) (REGRESSION-fitness-case-target this-fitness-case)))
+      (when (eq *verbose* :verbose)
+        (format t "~% ~D      ~D      ~D" index (float x) (REGRESSION-fitness-case-target this-fitness-case))))
     (values fitness-cases)))
 
 (defun REGRESSION-wrapper (result-from-program)

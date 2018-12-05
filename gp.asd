@@ -14,6 +14,7 @@
                                      (:file "random")
                                      (:file "kernel")
                                      ;;(:file "fast_eval")
+                                     (:file "functions")
                                      (:file "simplify")
                                      (:file "simplify_rules")))))
 
