@@ -13,6 +13,7 @@
            *best-of-run-individual*
            #:run-genetic-programming-system
            #:individual
+           #:compile-program
    ))
 
 (in-package #:gp.kernel)
@@ -817,3 +818,8 @@
         ;; Smash in the new subtree.
         (setf (first subtree-pointer) new-subtree))
       (values (first new-program) new-subtree))))
+
+(defun compile-program (args program)
+  (compile nil `(lambda (,@args)
+                  (declare (ignorable ,@args))
+                  ,program)))
