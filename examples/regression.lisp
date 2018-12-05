@@ -2,7 +2,6 @@
   (:use #:cl
         #:gp.kernel
         #:gp.functions
-        #:gp.simplify
         #:gp.simplify-rules
         )
   (:export #:run
@@ -62,6 +61,7 @@
     (values standardized-fitness hits)))
 
 (defun define-parameters-for-REGRESSION ()
+  (setf *rules* *algebraic-rules*)
   (setf *number-of-fitness-cases* 10000)
   (setf *max-depth-for-new-individuals* 6)
   (setf *max-depth-for-individuals-after-crossover* 17)

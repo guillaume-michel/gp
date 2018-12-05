@@ -12,10 +12,10 @@
                         :serial t
                         :components ((:file "package")
                                      (:file "random")
-                                     (:file "kernel")
                                      ;;(:file "fast_eval")
                                      (:file "functions")
                                      (:file "simplify")
+                                     (:file "kernel")
                                      (:file "simplify_rules")))))
 
 (defsystem "gp/examples/majority_on"

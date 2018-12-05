@@ -1,6 +1,9 @@
 (defpackage #:gp.kernel
-  (:use #:cl #:gp.random)
+  (:use #:cl
+        #:gp.random
+        #:gp.simplify)
   (:export *verbose*
+           *rules*
            *number-of-fitness-cases*
            *max-depth-for-new-individuals*
            *max-depth-for-individuals-after-crossover*
@@ -27,6 +30,9 @@
 
 (defvar *verbose* :unbound
   "Run in verbose mode with :verbose")
+
+(defvar *rules* :unbound
+  "simplification rules")
 
 (defvar *number-of-fitness-cases* :unbound
   "The number of fitness cases")
@@ -154,12 +160,14 @@
     (format t "~5%The best-of-run individual program ~
                for this run was found on ~%generation ~D and had a ~
                standardized fitness measure ~
-               of ~D and ~D hit~P.  ~%It was:~%~S"
+               of ~D and ~D hit~P.  ~%It was:~%~S ~
+               ~%which simplifies to:~%~S"
             *generation-of-best-of-run-individual*
             (individual-standardized-fitness *best-of-run-individual*)
             (individual-hits *best-of-run-individual*)
             (individual-hits *best-of-run-individual*)
-            (individual-program *best-of-run-individual*))))
+            (individual-program *best-of-run-individual*)
+            (car (edit-top-level-sexpression (copy-tree (individual-program *best-of-run-individual*)) *rules*)))))
 
 (defun report-on-generation (generation-number population)
   "Prints out the best individual at the end of each generation"

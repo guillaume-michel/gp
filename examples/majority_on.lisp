@@ -1,5 +1,7 @@
 (defpackage #:gp.examples.majority-on
-  (:use #:cl #:gp.kernel)
+  (:use #:cl
+        #:gp.kernel
+        #:gp.simplify-rules)
   (:export #:run
            #:run-example
    ))
@@ -72,6 +74,7 @@
     (values standardized-fitness hits)))
 
 (defun define-parameters-for-MAJORITY-ON ()
+  (setf *rules* *boolean-rules*)
   (setf *number-of-fitness-cases* 8)
   (setf *max-depth-for-new-individuals* 6)
   (setf *max-depth-for-new-subtrees-in-mutants* 4)
@@ -112,4 +115,10 @@
 (defun run-example (&key (verbose nil))
   (multiple-value-bind (population fitness-cases)
       (run 1000 50 48 :verbose verbose)
+    (declare (ignore population fitness-cases))))
+
+(defun bench ()
+  (multiple-value-bind (population fitness-cases)
+      (time
+       (run 1000 50 48 :verbose nil))
     (declare (ignore population fitness-cases))))
