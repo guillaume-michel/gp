@@ -117,7 +117,21 @@
                                (eq (second sexpression) (third sexpression)))
                :action (replace-sexpression (second sexpression)))
 
-;;; Boolean Rule base.
+;;; Transforms expressions of the form (and <xxx> <xxx> <yyy>) into
+;;; (and <xxx> <yyy>).
+(def-edit-rule and-dedup *boolean-rules* (sexpression)
+               :condition (and (consp sexpression)
+                               (eq 'and (first sexpression)))
+               :action (replace-sexpression (cons 'and (remove-duplicates (rest sexpression)))))
+
+;;; Transforms expressions of the form (or <xxx> <xxx> <yyy>) into
+;;; (or <xxx> <yyy>).
+(def-edit-rule or-dedup *boolean-rules* (sexpression)
+               :condition (and (consp sexpression)
+                               (eq 'or (first sexpression)))
+               :action (replace-sexpression (cons 'or (remove-duplicates (rest sexpression) :from-end t))))
+
+;;; Algebraic Rule base.
 
 (defvar *algebraic-rules* nil
   "The rule base for Algebraic problems.")
