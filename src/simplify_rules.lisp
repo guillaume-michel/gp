@@ -246,3 +246,27 @@
                                (symbolp (third sexpression))
                                (eq (second sexpression) (third sexpression)))
                :action (replace-sexpression (list '* 2 (second sexpression))))
+
+;;; Transforms expressions of the form (op number number) into ;;; result.
+(def-edit-rule num-op-num->result *algebraic-rules* (sexpression)
+               :condition (and (consp sexpression)
+                               (member (first sexpression) '(% * + -)
+                                       :test #'eq)
+                               (= (length sexpression) 3)
+                               (numberp (second sexpression))
+                               (numberp (third sexpression)))
+               :action (replace-sexpression (eval sexpression)))
+
+;;; Transforms expressions of the form (% <xxx> (% <yyy> <zzz>)) into ;;; (% (* <xxx> <zzz>) <yyy>)
+;; (def-edit-rule %-x-%-y-z->res *algebraic-rules* (sexpression)
+;;                :condition (and (consp sexpression)
+;;                                (eq '% (first sexpression))
+;;                                (= (length sexpression) 3)
+;;                                (consp (third sexpression))
+;;                                (eq '% (first (third sexpression)))
+;;                                (= (length (third sexpression)) 3))
+;;                :action (replace-sexpression (list '%
+;;                                                   (list '*
+;;                                                         (second sexpression)
+;;                                                         (third (third sexpression)))
+;;                                                   (second (third sexpression)))))

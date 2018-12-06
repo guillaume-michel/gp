@@ -2,6 +2,7 @@
   (:use #:cl
         #:gp.kernel
         #:gp.functions
+        #:gp.simplify
         #:gp.simplify-rules
         )
   (:export #:run
@@ -48,7 +49,7 @@
   (let (raw-fitness hits standardized-fitness x target-value difference value-from-program this-fitness-case func)
     (setf raw-fitness 0.0)
     (setf hits 0)
-    (setf func (compile-program '(x) program))
+    (setf func (compile-program '(x) (car (edit-top-level-sexpression program *rules*))))
     (dotimes (index *number-of-fitness-cases*)
       (setf this-fitness-case (aref fitness-cases index))
       (setf x (REGRESSION-fitness-case-independent-variable this-fitness-case))
