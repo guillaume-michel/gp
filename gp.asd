@@ -5,7 +5,9 @@
   :mailto "contact@orilla.fr"
   :homepage "http://orilla.fr"
   :license  "MIT License (see COPYING)"
-  :depends-on ("alexandria")
+  :depends-on ("alexandria"
+               "cl-cpus"
+               "lparallel")
   :components ((:static-file "COPYING")
                (:static-file "README.md")
                (:module "src"

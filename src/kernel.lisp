@@ -99,6 +99,7 @@
           "Problem-Function must be a function.")
   (assert (numberp seed) (seed)
           "The randomizer seed must be a number")
+  (setf lparallel:*kernel* (lparallel:make-kernel (1+ (cpus:get-number-of-processors))))
   ;; Set the global randomizer seed.
   (setf *seed* (coerce seed 'double-float))
   ;; Initialize best-of-run recording variables
@@ -476,7 +477,7 @@
                                        fitness-function)
   "Loops over the individuals in the population evaluating and
    recording the fitness and hits."
-  (dotimes (individual-index (length population))
+  (lparallel:pdotimes (individual-index (length population))
     (let ((individual (aref population individual-index)))
       (multiple-value-bind (standardized-fitness hits)
           (funcall fitness-function (individual-program individual)
