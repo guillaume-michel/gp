@@ -1,12 +1,12 @@
-(defpackage #:gp.examples.majority-on
-  (:use #:cl
-        #:gp.kernel
-        #:gp.simplify-rules)
+(defpackage :gp.examples.majority-on
+  (:use :cl
+        :gp.kernel
+        :gp.simplify-rules)
   (:export #:run
            #:run-example
    ))
 
-(in-package #:gp.examples.majority-on)
+(in-package :gp.examples.majority-on)
 
 ;;; Boolean 3-Majority-on Problem
 

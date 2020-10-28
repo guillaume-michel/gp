@@ -1,16 +1,16 @@
-(defpackage #:gp.examples.regression
-  (:use #:cl
-        #:gp.kernel
-        #:gp.functions
-        #:gp.simplify
-        #:gp.simplify-rules
+(defpackage :gp.examples.regression
+  (:use :cl
+        :gp.kernel
+        :gp.functions
+        :gp.simplify
+        :gp.simplify-rules
         )
   (:export #:run
            #:run-example
            #:bench
            ))
 
-(in-package #:gp.examples.regression)
+(in-package :gp.examples.regression)
 
 ;;; Regression Problem for 0.5x**2
 
